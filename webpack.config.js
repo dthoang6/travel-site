@@ -8,10 +8,13 @@ module.exports = {
     filename: "bundled.js",
     path: path.resolve(__dirname, "app")
   },
+  /* webpack dev server workflow */
   devServer: {
+    /* refresh browser when save html */
     before: function (app, server) {
       server._watch("./app/**/*.html");
     },
+    /* refresh browser when save css, js */
     contentBase: path.join(__dirname, "app"),
     hot: true,
     port: 3000,
