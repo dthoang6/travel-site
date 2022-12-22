@@ -4,11 +4,6 @@ class MobileMenu {
         -selecting elements from the DOM
         -event handling
         -define functionality
-    
-     document.querySelector(".site-header__menu-icon").addEventListener("click", function () {
-      console.log("the top right icon was clicked.");
-    });
-    */
     /* we can structure our code so each actions fit into their own little organized compartments. */
 
     /* 1.selecting elements from the DOM */
@@ -35,6 +30,7 @@ class MobileMenu {
     /* add a new css class to the menuContent element */
     this.menuContent.classList.toggle("site-header__menu-content--is-visible");
     this.siteHeader.classList.toggle("site-header--is-expanded");
+    this.menuIcon.classList.toggle("site-header__menu-icon--close-x");
   }
 }
 
