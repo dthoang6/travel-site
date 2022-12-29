@@ -2,8 +2,9 @@ import throttle from "lodash/throttle"; /* run our function every 200ms continuo
 import debounce from "lodash/debounce"; /* do something once after we finally stopped resizing */
 
 class RevealOnScroll {
-  constructor(els) {
-    this.itemsToReveal = document.querySelectorAll(".feature-item");
+  constructor(els, thresholdPercent) {
+    this.thresholdPercent = thresholdPercent;
+    this.itemsToReveal = els;
     this.browserHeight = window.innerHeight;
     this.hideInitially();
     /* the web browser is calling our function for every single pixel we scroll
@@ -38,7 +39,7 @@ class RevealOnScroll {
       crossed the bottom edge of the browsers viewport yet, do not calculate. */
       console.log("Element was calculated.");
       let scrollPercent = (el.getBoundingClientRect().top / this.browserHeight) * 100;
-      if (scrollPercent < 75) {
+      if (scrollPercent < this.thresholdPercent) {
         el.classList.add("reveal-item--is-visible");
         /* set property to true to use if an element is revealed to stop running calculation*/
         el.isRevealed = true;

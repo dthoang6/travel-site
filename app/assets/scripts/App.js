@@ -9,10 +9,11 @@ let mobileMenu = new MobileMenu();
 - selector that selects these feature items
 - and then we can create another new instance of the same class and
 - give it a selector that selects these testimonial items
-- then we just need to go into the class and make it flexible */
+- then we just need to go into the class and make it flexible
+- by giving it the parameters and use it in the class */
 
-new RevealOnScroll(document.querySelectorAll(".feature-item"));
-new RevealOnScroll(document.querySelectorAll(".testimonial"));
+new RevealOnScroll(document.querySelectorAll(".feature-item"), 75);
+new RevealOnScroll(document.querySelectorAll(".testimonial"), 60);
 
 if (module.hot) {
   module.hot.accept();
