@@ -12,6 +12,7 @@
     @mixin atSmall {
       width: 72px;
     }
+
     img {
       display: block;
       position: absolute;

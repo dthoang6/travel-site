@@ -1,4 +1,10 @@
 .modal {
+  /* hidden by default until user click a button */
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(1.2);
+  transition: all 0.3s ease-out;
+  /* styling */
   position: fixed; /* even if you scroll, the modal still takes up your entire screen */
   /* the extreme edges */
   top: 0;
@@ -9,6 +15,12 @@
   background-color: rgba(255, 255, 255, 0.94);
   z-index: 5;
   display: flex;
+
+  &--is-visible {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+  }
 
   &__inner {
     flex: 1;
