@@ -2,22 +2,43 @@ import "../styles/styles.css";
 import MobileMenu from "./modules/MobileMenu";
 import RevealOnScroll from "./modules/RevealOnScroll";
 import StickyHeader from "./modules/StickyHeader";
-import Modal from "./modules/Modal";
 
-new Modal();
 let stickyHeader = new StickyHeader();
 let mobileMenu = new MobileMenu();
-
-/* create one new instance of the reveal on scroll class
-- and in these parentheses, let's give it a DOM selector
-- selector that selects these feature items
-- and then we can create another new instance of the same class and
-- give it a selector that selects these testimonial items
-- then we just need to go into the class and make it flexible
-- by giving it the parameters and use it in the class */
+let modal;
 
 new RevealOnScroll(document.querySelectorAll(".feature-item"), 75);
 new RevealOnScroll(document.querySelectorAll(".testimonial"), 60);
+
+/* handle load the Modal.js file if user click and open the modal. */
+document.querySelectorAll(".open-modal").forEach(el => {
+  el.addEventListener("click", e => {
+    e.preventDefault();
+
+    if (typeof modal == "undefined") {
+      /* load the file if user just click first time */
+      /* this will return a promise and we do not know how long does it take? 
+      but once it does finish loading the modal file, we want to use it to create
+      a new instance of the class.
+      we will provide a function in both then and catch
+      then: if things go as planned, we call what ever function we provide in the then parenthesis
+      catch: if there is a problem in loading file, we call what ever function we provide in the catch parenthesis
+    */
+      import("./modules/Modal")
+        .then(x => {
+          /* x presents the Modal file we just load, we want to use it to create a new
+        instance of the Modal Class */
+          modal = new x.default();
+          /* give the browser a few milliseconds to create a modal object before we try to open it */
+          setTimeout(() => modal.openTheModal(), 20);
+        })
+        .catch(() => console.log("There was a problem."));
+    } else {
+      /* Do not need to load the file, just open it from browser memory */
+      modal.openTheModal();
+    }
+  });
+});
 
 if (module.hot) {
   module.hot.accept();

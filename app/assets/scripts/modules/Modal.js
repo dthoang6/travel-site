@@ -3,13 +3,11 @@ class Modal {
     this.injectHTML();
     this.modal = document.querySelector(".modal");
     this.closeIcon = document.querySelector(".modal__close");
-    this.openModalButtons = document.querySelectorAll(".open-modal");
     this.events();
   }
 
   events() {
-    /* listen for open click */
-    this.openModalButtons.forEach(el => el.addEventListener("click", e => this.openTheModal(e)));
+    /* listen for open click in App.js to load file on the fly */
     /* listen for close click */
     this.closeIcon.addEventListener("click", () => this.closeTheModal());
     /* pushes any key */
@@ -22,8 +20,6 @@ class Modal {
     }
   }
   openTheModal(e) {
-    /* prevent the default scroll to top */
-    e.preventDefault();
     /* open the modal by giving the class tho make it visible */
     this.modal.classList.add("modal--is-visible");
   }
