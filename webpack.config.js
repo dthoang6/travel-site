@@ -1,40 +1,112 @@
+const currentTask = process.env.npm_lifecycle_event; /* our constant variable will equal either dev or build */
 const path = require("path");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const fse = require("fs-extra");
 
-const postCSSPlugins = [require("postcss-import"), require("postcss-mixins"), require("postcss-simple-vars"), require("postcss-nested"), require("autoprefixer"), require("postcss-hexrgba")];
+const postCSSPlugins = [
+  require("postcss-import"), 
+  require("postcss-mixins"), 
+  require("postcss-simple-vars"), 
+  require("postcss-nested"), 
+  require("autoprefixer"), 
+  require("postcss-hexrgba")
+];
 
-module.exports = {
+class RunAfterCompile {
+  apply(compiler) {
+    compiler.hooks.done.tap('Copy images', function () {
+      fse.copySync('./app/assets/images', './docs/assets/images')
+    })
+  }
+}
+
+let cssConfig = {
+  test: /\.css$/i,
+  use: [
+    "css-loader",
+    {
+      loader: "postcss-loader?url=false",
+      options: { postcssOptions: { plugins: postCSSPlugins } }
+    }
+  ]
+};
+/* pages is an array where we use the Webpack html plugin for each html file that we have */
+/* fse.readdirSync('./app') will return an an array of all the files in the app folder 
+- we use filter method will return a new array that we can customize to only want file with html with a function
+- map method will generate new array of multiple htmlwebpackplugin based on array of html files
+- we want to use htmlWepackPlugin once for each of html file in the array.
+*/
+let pages = fse
+  .readdirSync("./app")
+  .filter(function (file) {
+    return file.endsWith(".html");
+  })
+  .map(function (page) {
+    return new HtmlWebpackPlugin({
+      filename: page,
+      template: `./app/${page}`
+    });
+  });
+/* any configuration that can be the same or shared between Dev and Build */
+let config = {
   entry: "./app/assets/scripts/App.js",
-  output: {
+  plugins: pages,
+  module: {
+    rules: [cssConfig]
+  }
+};
+
+/* customize config object for dev */
+if (currentTask == "dev") {
+  cssConfig.use.unshift("style-loader");
+  config.output = {
     filename: "bundled.js",
     path: path.resolve(__dirname, "app")
-  },
-  /* webpack dev server workflow */
-  devServer: {
-    /* refresh browser when save html */
+  };
+  config.devServer = {
     before: function (app, server) {
       server._watch("./app/**/*.html");
     },
-    /* refresh browser when save css, js */
     contentBase: path.join(__dirname, "app"),
     hot: true,
     port: 3000,
     host: "0.0.0.0"
-  },
-  mode: "development",
-  /* postcss workflow with webpack */
-  module: {
-    rules: [
-      {
-        test: /\.css$/i /* regular expression */,
-        use: [
-          "style-loader",
-          "css-loader",
-          {
-            loader: "postcss-loader?url=false",
-            options: { postcssOptions: { plugins: postCSSPlugins } }
-          }
-        ]
+  };
+  config.mode = "development";
+}
+/* customize config object for build */
+if (currentTask == "build") {
+  /* OUR CODE WILL WORK IN THE WIDE RANGE OF OLDER BROWSERS */
+  config.module.rules.push({
+    test: /\.js$/, /* only want this rule to apply to js files */
+    exclude: /(node_modules)/,
+    use: {
+      loader: 'babel-loader',
+      options: {
+        presets: ['@babel/preset-env']
       }
-    ]
-  }
-};
+    }
+  })
+  cssConfig.use.unshift(MiniCssExtractPlugin.loader);
+  config.output = {
+    filename: "[name].[chunkhash].js",
+    chunkFilename: "[name].[chunkhash].js",
+    path: path.resolve(__dirname, "docs")
+  };
+  config.mode = "production";
+  config.optimization = {
+    splitChunks: { chunks: "all" },
+    minimize: true,
+    minimizer: [`...`, new CssMinimizerPlugin()]
+  };
+  config.plugins.push(
+    new CleanWebpackPlugin(), 
+    new MiniCssExtractPlugin({ filename: "styles.[chunkhash].css" }),
+    new RunAfterCompile() /* create our own plugin class for webpack to copy image file folder */
+    );
+}
+
+module.exports = config;

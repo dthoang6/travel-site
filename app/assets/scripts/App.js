@@ -25,7 +25,7 @@ document.querySelectorAll(".open-modal").forEach(el => {
       then: if things go as planned, we call what ever function we provide in the then parenthesis
       catch: if there is a problem in loading file, we call what ever function we provide in the catch parenthesis
     */
-      import("./modules/Modal")
+      import(/* webpackChunkName: "modal" */ "./modules/Modal")
         .then(x => {
           /* x presents the Modal file we just load, we want to use it to create a new
         instance of the Modal Class */
