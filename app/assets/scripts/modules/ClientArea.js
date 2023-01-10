@@ -37,7 +37,7 @@ class ClientArea {
     - catch function: if the password does not match our cloud function will send back
     a status code of 401 unauthorized so wee will provide an arrow function to add a text
     */
-    Axios.post('https://app.netlify.com/sites/quiet-sunshine-9e5e6c/functions/secret-area', {password: this.field.value} ).then(response => {
+    Axios.post('https://quiet-sunshine-9e5e6c.netlify.app/.netlify/functions/secret-area', {password: this.field.value} ).then(response => {
       this.form.remove();
       this.contentArea.innerHTML = response.data; /*this will be the value that cloud function: secret-area.js responds with. */
     }).catch(() => {
