@@ -5,6 +5,22 @@ import RevealOnScroll from "./modules/RevealOnScroll";
 import StickyHeader from "./modules/StickyHeader";
 import ClientArea from "./modules/ClientArea";
 
+/* React related code */
+import React from "react"
+import ReactDOM from "react-dom"
+/* import react components that we created */
+import MyAmazingComponent from "./modules/MyAmazingComponent"
+
+/* two arguments:
+- the first argument is a component that you want to render to the page in react.
+everything is really boils down to the idea of components. Think of component
+as a reusable feature.
+- the second argumment is the element on the page that you want to render to.
+*/
+ReactDOM.render(<MyAmazingComponent />, document.querySelector("#my-react-example"))
+
+/* end react related code */
+
 let clientArea = new ClientArea();
 let stickyHeader = new StickyHeader();
 let mobileMenu = new MobileMenu();

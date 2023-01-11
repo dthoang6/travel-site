@@ -55,7 +55,18 @@ let config = {
   entry: "./app/assets/scripts/App.js",
   plugins: pages,
   module: {
-    rules: [cssConfig]
+    rules: [cssConfig,
+    {
+    test: /\.js$/, /* only want this rule to apply to js files */
+    exclude: /(node_modules)/,
+    use: {
+      loader: 'babel-loader',
+      options: {
+        presets: ['@babel/preset-react', '@babel/preset-env']
+      }
+    }
+  }
+    ]
   }
 };
 
@@ -79,17 +90,6 @@ if (currentTask == "dev") {
 }
 /* customize config object for build */
 if (currentTask == "build") {
-  /* OUR CODE WILL WORK IN THE WIDE RANGE OF OLDER BROWSERS */
-  config.module.rules.push({
-    test: /\.js$/, /* only want this rule to apply to js files */
-    exclude: /(node_modules)/,
-    use: {
-      loader: 'babel-loader',
-      options: {
-        presets: ['@babel/preset-env']
-      }
-    }
-  })
   cssConfig.use.unshift(MiniCssExtractPlugin.loader);
   config.output = {
     filename: "[name].[chunkhash].js",
